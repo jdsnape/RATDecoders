@@ -204,6 +204,8 @@ if __name__ == "__main__":
         print(("[+] Writing Config to file {0}".format(args[1])))
         with open(args[1], 'a') as outFile:
             for key, value in sorted(config.items()):
+                if isinstance(value, bytes):
+                    value = value.decode('utf-8')
                 clean_value = [x for x in value if x in string.printable]
                 outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
     # if no seconds arg then assume you want it printing to screen
