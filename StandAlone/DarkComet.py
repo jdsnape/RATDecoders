@@ -14,7 +14,7 @@ from struct import unpack
 try:
 	import pefile
 except ImportError:
-	print "Couldnt Import pefile. Try 'sudo pip install pefile'"
+	print("Couldnt Import pefile. Try 'sudo pip install pefile'")
 from optparse import OptionParser
 from binascii import *
 
@@ -22,7 +22,7 @@ from binascii import *
 
 def rc4crypt(data, key):
     x = 0
-    box = range(256)
+    box = list(range(256))
     for i in range(256):
         x = (x + box[i] + ord(key[i % len(key)])) % 256
         box[i], box[x] = box[x], box[i]
@@ -45,7 +45,7 @@ def v51_data(data, enckey):
 		key, value = entries.split('=')
 		key = key.strip()
 		value = value.rstrip()[1:-1]
-		clean_value = filter(lambda x: x in string.printable, value)
+		clean_value = [x for x in value if x in string.printable]
 		config[key] = clean_value
 		config["Version"] = enckey[:-4]
 	return config
@@ -95,13 +95,13 @@ def configExtract(rawData, key):
 			data = pe.get_memory_mapped_image()[data_rva:data_rva+size]
 			config = v51_data(data, key)
 
-		elif str(entry.name) in config.keys():
+		elif str(entry.name) in list(config.keys()):
 
 			data_rva = entry.directory.entries[0].data.struct.OffsetToData
 			size = entry.directory.entries[0].data.struct.Size
 			data = pe.get_memory_mapped_image()[data_rva:data_rva+size]
 			dec = rc4crypt(unhexlify(data), key)
-			config[str(entry.name)] = filter(lambda x: x in string.printable, dec)
+			config[str(entry.name)] = [x for x in dec if x in string.printable]
 			config["Version"] = key[:-4]
 	return config
 
@@ -147,23 +147,23 @@ if __name__ == "__main__":
 		parser.print_help()
 		sys.exit()
 	try:
-		print "[+] Reading file"
+		print("[+] Reading file")
 		fileData = open(args[0], 'rb').read()
 	except:
-		print "[+] Couldn't Open File {0}".format(args[0])
-	print "[+] Searching for Config"
+		print("[+] Couldn't Open File {0}".format(args[0]))
+	print("[+] Searching for Config")
 	config = run(fileData)
 	if config == None:
-		print "[+] Config not found"
+		print("[+] Config not found")
 		sys.exit()
 	if len(args) == 2:
-		print "[+] Writing Config to file {0}".format(args[1])
+		print("[+] Writing Config to file {0}".format(args[1]))
 		with open(args[1], 'a') as outFile:
-			for key, value in sorted(config.iteritems()):
+			for key, value in sorted(config.items()):
 				outFile.write("Key: {0}\t Value: {1}\n".format(key,value))
 		
 	else:
-		print "[+] Printing Config to screen"
-		for key, value in sorted(config.iteritems()):
-			print "   [-] Key: {0}\t Value: {1}".format(key,value)
-		print "[+] End of Config"
+		print("[+] Printing Config to screen")
+		for key, value in sorted(config.items()):
+			print("   [-] Key: {0}\t Value: {1}".format(key,value))
+		print("[+] End of Config")

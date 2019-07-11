@@ -28,7 +28,7 @@ def run(file_name):
         
 #Helper Functions Go Here
 def string_print(line):
-    return filter(lambda x: x in string.printable, line)
+    return [x for x in line if x in string.printable]
     
 def parse_config(raw_config):
     config_dict = {}
@@ -46,8 +46,8 @@ def parse_config(raw_config):
             elif b64.endswith('BLOWFISH'):
                 config_dict['Encryption'] = 'BLOWFISH'
         elif line.startswith('key'):
-            print '    [!] Traffic Encryption Detected'
-            print '    [!] You need to decode the key manually. Sorry'
+            print('    [!] Traffic Encryption Detected')
+            print('    [!] You need to decode the key manually. Sorry')
         else:
             try:
                 key, value = line.split('<>')
@@ -67,23 +67,23 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit()
     #Run the config extraction
-    print "[+] Searching for Config"
+    print("[+] Searching for Config")
     config = run(args[0])
     #If we have a config figure out where to dump it out.
     if not config:
-        print "[+] Config not found"
+        print("[+] Config not found")
         sys.exit()
     #if you gave me two args im going to assume the 2nd arg is where you want to save the file
     if len(args) == 2:
-        print "[+] Writing Config to file {0}".format(args[1])
+        print("[+] Writing Config to file {0}".format(args[1]))
         with open(args[1], 'a') as outFile:
-            for key, value in sorted(config.iteritems()):
-                clean_value = filter(lambda x: x in string.printable, value)
+            for key, value in sorted(config.items()):
+                clean_value = [x for x in value if x in string.printable]
                 outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
     # if no seconds arg then assume you want it printing to screen
     else:
-        print "[+] Printing Config to screen"
-        for key, value in sorted(config.iteritems()):
-            clean_value = filter(lambda x: x in string.printable, value)
-            print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-        print "[+] End of Config"
+        print("[+] Printing Config to screen")
+        for key, value in sorted(config.items()):
+            clean_value = [x for x in value if x in string.printable]
+            print("   [-] Key: {0}\t Value: {1}".format(key,clean_value))
+        print("[+] End of Config")

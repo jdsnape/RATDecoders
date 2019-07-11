@@ -18,10 +18,10 @@ def run(rawData):
 	#try:
 		rawconfig = rawData.split("abccba")
 		if len(rawconfig) > 1:
-			print "Running Abccba"
+			print("Running Abccba")
 			dict = oldversions(rawconfig)
 		else:
-			print "Running pype32"
+			print("Running pype32")
 			pe = pype32.PE(data=rawData) 
 			rawConfig = getStream(pe)
 			if rawConfig.startswith("bute"): # workaround for an error in pype32 will still work when fixed
@@ -29,7 +29,7 @@ def run(rawData):
 			dict = parseConfig(rawConfig)
 		#except:
 			#return None
-		print dict
+		print(dict)
 		
 
 		
@@ -60,7 +60,7 @@ def parseConfig(rawConfig):
 		that = config[offset+1:offset+int(length)]
 		stringList.append(str(that.replace("\x00", "")))
 		offset += int(length+1)
-	print stringList
+	print(stringList)
 	dict = {}
 	for i in range(0,60):
 		dict["Domain"] = stringList[37]
@@ -136,7 +136,7 @@ def oldversions(config):
 	elif len(config) == 18:
 		dict["Version"] = "V2.0"
 		for i in range(1, len(config)):
-			print i, config[i]
+			print(i, config[i])
 			dict["Domain"] = config[1] #
 			dict["Port"] = config[2] #
 			dict["Campaign Name"] = config[3] #
@@ -165,25 +165,25 @@ if __name__ == "__main__":
 		parser.print_help()
 		sys.exit()
 	try:
-		print "[+] Reading file"
+		print("[+] Reading file")
 		fileData = open(args[0], 'rb').read()
 	except:
-		print "[+] Couldn't Open File {0}".format(args[0])
-	print "[+] Searching for Config"
+		print("[+] Couldn't Open File {0}".format(args[0]))
+	print("[+] Searching for Config")
 	config = run(fileData)
 	if config == None:
-		print "[+] Config not found"
+		print("[+] Config not found")
 		sys.exit()
 	if len(args) == 2:
-		print "[+] Writing Config to file {0}".format(args[1])
+		print("[+] Writing Config to file {0}".format(args[1]))
 		with open(args[1], 'a') as outFile:
-			for key, value in sorted(config.iteritems()):
-				clean_value = filter(lambda x: x in string.printable, value)
+			for key, value in sorted(config.items()):
+				clean_value = [x for x in value if x in string.printable]
 				outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
 		
 	else:
-		print "[+] Printing Config to screen"
-		for key, value in sorted(config.iteritems()):
-			clean_value = filter(lambda x: x in string.printable, value)
-			print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-		print "[+] End of Config"
+		print("[+] Printing Config to screen")
+		for key, value in sorted(config.items()):
+			clean_value = [x for x in value if x in string.printable]
+			print("   [-] Key: {0}\t Value: {1}".format(key,clean_value))
+		print("[+] End of Config")

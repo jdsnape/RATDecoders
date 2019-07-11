@@ -20,7 +20,7 @@ from optparse import OptionParser
 try:
     import pype32
 except ImportError:
-    print "[+] Couldn't Import pype32 'https://github.com/crackinglandia/pype32'"
+    print("[+] Couldn't Import pype32 'https://github.com/crackinglandia/pype32'")
 
 
 # Main Decode Function Goes Here
@@ -38,7 +38,7 @@ def run(data):
         config_dict = parse_config(string_list)
         return config_dict
     except Exception as e:
-        print e
+        print(e)
         return None
     
         
@@ -50,7 +50,7 @@ def get_strings(pe, dir_type):
     string_list = []
     m = pe.ntHeaders.optionalHeader.dataDirectory[14].info
     for s in m.netMetaDataStreams[dir_type].info:
-        for offset, value in s.iteritems():
+        for offset, value in s.items():
             string_list.append(value)
             #print counter, value
         counter += 1
@@ -149,7 +149,7 @@ def parse_config(string_list):
 def run_recursive(folder, output):
     counter1 = 0
     counter2 = 0
-    print "[+] Writing Configs to File {0}".format(output)
+    print(("[+] Writing Configs to File {0}".format(output)))
     with open(output, 'a+') as out:
         #This line will need changing per Decoder
         out.write("Filename,Campaign ID, Version, Install Name, Install Dir, Registry Value, Domain, Network Seperator, Install Flag\n")    
@@ -161,7 +161,7 @@ def run_recursive(folder, output):
                 out.write('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},\n'.format(server, config_dict["Campaign ID"],config_dict["version"],config_dict["Install Name"],config_dict["Install Dir"],config_dict["Registry Value"],config_dict["Domain"],config_dict["Port"],config_dict["Network Separator"],config_dict["Install Flag"]))
                 counter1 += 1
             counter2 += 1
-    print "[+] Decoded {0} out of {1} Files".format(counter1, counter2)
+    print(("[+] Decoded {0} out of {1} Files".format(counter1, counter2)))
     return "Complete"
 
 # Main
@@ -182,34 +182,34 @@ if __name__ == "__main__":
             run_recursive(args[0], args[1])
             sys.exit()
         else:
-            print "[+] You need to specify Both Dir to read AND Output File"
+            print("[+] You need to specify Both Dir to read AND Output File")
             parser.print_help()
             sys.exit()
     
     # If not recurisve try to open file
     try:
-        print "[+] Reading file"
+        print("[+] Reading file")
         file_data = open(args[0], 'rb').read()
     except:
-        print "[+] Couldn't Open File {0}".format(args[0])
+        print(("[+] Couldn't Open File {0}".format(args[0])))
     #Run the config extraction
-    print "[+] Searching for Config"
+    print("[+] Searching for Config")
     config = run(file_data)
     #If we have a config figure out where to dump it out.
     if config == None:
-        print "[+] Config not found"
+        print("[+] Config not found")
         sys.exit()
     #if you gave me two args im going to assume the 2nd arg is where you want to save the file
     if len(args) == 2:
-        print "[+] Writing Config to file {0}".format(args[1])
+        print(("[+] Writing Config to file {0}".format(args[1])))
         with open(args[1], 'a') as outFile:
-            for key, value in sorted(config.iteritems()):
-                clean_value = filter(lambda x: x in string.printable, value)
+            for key, value in sorted(config.items()):
+                clean_value = [x for x in value if x in string.printable]
                 outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
     # if no seconds arg then assume you want it printing to screen
     else:
-        print "[+] Printing Config to screen"
-        for key, value in sorted(config.iteritems()):
-            clean_value = filter(lambda x: x in string.printable, value)
-            print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-        print "[+] End of Config"
+        print("[+] Printing Config to screen")
+        for key, value in sorted(config.items()):
+            clean_value = [x for x in value if x in string.printable]
+            print(("   [-] Key: {0}\t Value: {1}".format(key,clean_value)))
+        print("[+] End of Config")

@@ -31,7 +31,7 @@ def run(file_name):
     
     for c in config_list:
         if any(".exe" in s for s in c):
-            print "Found Version < 1.3"
+            print("Found Version < 1.3")
             configs = config_v1(config_list)
             return configs
     
@@ -42,7 +42,7 @@ def run(file_name):
 
     for c in config_list:
         if any(".exe" in s for s in c):
-            print "Found Version > 1.2"
+            print("Found Version > 1.2")
             configs = config_v2(config_list)
             return configs
   
@@ -97,23 +97,23 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit()
     #Run the config extraction
-    print "[+] Searching for Config"
+    print("[+] Searching for Config")
     config = run(args[0])
     #If we have a config figure out where to dump it out.
     if not config:
-        print "[+] Config not found"
+        print("[+] Config not found")
         sys.exit()
     #if you gave me two args im going to assume the 2nd arg is where you want to save the file
     if len(args) == 2:
-        print "[+] Writing Config to file {0}".format(args[1])
+        print("[+] Writing Config to file {0}".format(args[1]))
         with open(args[1], 'a') as outFile:
-            print "[+] Printing Config to screen"
-            for key, value in sorted(config.iteritems()):
-                print "   [-] Key: {0}\t Value: {1}".format(key,value)
-            print "[+] End of Config"
+            print("[+] Printing Config to screen")
+            for key, value in sorted(config.items()):
+                print("   [-] Key: {0}\t Value: {1}".format(key,value))
+            print("[+] End of Config")
     # if no seconds arg then assume you want it printing to screen
     else:
-        print "[+] Printing Config to screen"
-        for key, value in sorted(config.iteritems()):
-            print "   [-] Key: {0}\t Value: {1}".format(key,value)
-        print "[+] End of Config"
+        print("[+] Printing Config to screen")
+        for key, value in sorted(config.items()):
+            print("   [-] Key: {0}\t Value: {1}".format(key,value))
+        print("[+] End of Config")

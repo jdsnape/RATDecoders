@@ -32,11 +32,11 @@ def run(raw_data):
     try:
         coded_config = get_codedconfig(raw_data)
         if coded_config[0:4] == '\x08\x00\x00\x00':
-            print "    [-] Found version 1.1x"
+            print("    [-] Found version 1.1x")
             config_dict = decrypt_v2(coded_config)
             
         elif coded_config[0:4] == '\x10\x00\x00\x00':
-            print "    [-] Found Version 2.x"
+            print("    [-] Found Version 2.x")
             # we need to derive a key from teh assembly guid
             guid = re.search('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}', raw_data).group()
             guid = uuid.UUID(guid).bytes_le
@@ -45,7 +45,7 @@ def run(raw_data):
             derived_key = derive_key(guid, encrypted_key)
             config_dict = decrypt_v3(coded_config, derived_key)
         else:
-           print "    [-] Found Version 1.0x"
+           print("    [-] Found Version 1.0x")
            config_dict = decrypt_v1(coded_config)
         return config_dict
     except:
@@ -57,7 +57,7 @@ def derive_key(guid, coded_key):
     try:
         from pbkdf2 import PBKDF2
     except:
-        print "[!] Unable to derive a key. requires 'sudo pip install pbkdf2'"
+        print("[!] Unable to derive a key. requires 'sudo pip install pbkdf2'")
         sys.exit()
     generator = PBKDF2(guid, guid, 8)
     aes_iv = generator.read(16)
@@ -115,7 +115,7 @@ def parse_config(raw_config, ver):
     
     # Some plugins drop in here as exe files. 
     if 'This program cannot be run' in raw_config:
-        print '    [!] Embedded EXE Plugin found'
+        print('    [!] Embedded EXE Plugin found')
         raw_config = raw_config.split('BuildTime')[1]
     with open('split.bin', 'wb') as out:
         out.write(raw_config)
@@ -211,27 +211,27 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit()
     try:
-        print "[+] Reading file {0}".format(args[0])
+        print("[+] Reading file {0}".format(args[0]))
         fileData = open(args[0], 'rb').read()
     except:
-        print "[+] Couldn't Open File {0}".format(args[0])
+        print("[+] Couldn't Open File {0}".format(args[0]))
         sys.exit()
     #Run the config extraction
-    print "[+] Searching for Config"
+    print("[+] Searching for Config")
     config = run(fileData)
     #If we have a config figure out where to dump it out.
     if config == None:
-        print "[+] Config not found"
+        print("[+] Config not found")
         sys.exit()
     #if you gave me two args im going to assume the 2nd arg is where you want to save the file
     if len(args) == 2:
-        print "[+] Writing Config to file {0}".format(args[1])
+        print("[+] Writing Config to file {0}".format(args[1]))
         with open(args[1], 'a') as outFile:
-            for key, value in sorted(config.iteritems()):
+            for key, value in sorted(config.items()):
                 outFile.write("Key: {0}\t Value: {1}\n".format(key,value))
     # if no seconds arg then assume you want it printing to screen
     else:
-        print "[+] Printing Config to screen"
-        for key, value in sorted(config.iteritems()):
-            print "   [-] Key: {0}\t Value: {1}".format(key,value)
-        print "[+] End of Config"
+        print("[+] Printing Config to screen")
+        for key, value in sorted(config.items()):
+            print("   [-] Key: {0}\t Value: {1}".format(key,value))
+        print("[+] End of Config")

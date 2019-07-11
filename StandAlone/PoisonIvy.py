@@ -45,7 +45,7 @@ def calcLength(byteStr):
 		return None
 
 def stringPrintable(line):
-	return filter(lambda x: x in string.printable, line)
+	return [x for x in line if x in string.printable]
 
 def firstSplit(data):
 	splits = data.split('Software\\Microsoft\\Active Setup\\Installed Components\\')
@@ -149,7 +149,7 @@ def configProcess(rawConfig):
 def runRecursive(folder, output):
 	counter1 = 0
 	counter2 = 0
-	print "[+] Writing Configs to File {0}".format(output)
+	print("[+] Writing Configs to File {0}".format(output))
 	with open(output, 'a+') as out:
 		#This line will need changing per Decoder
 		out.write("Filename,Campaign ID, Group ID, Domains, Password, Enable HKLM, HKLM Value, Enable ActiveX, ActiveX Value, Flag 3, Inject Exe, Mutex, Hijack Proxy, Persistant Proxy, Install Name, Install Path, Copy To ADS, Mely, Enable Thread Persistance, Inject Default Browser, Enable Keylogger\n")	
@@ -161,7 +161,7 @@ def runRecursive(folder, output):
 				out.write('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20}\n'.format(server, configOut["Campaign ID"],configOut["Group ID"],configOut["Domains"],configOut["Password"],configOut["Enable HKLM"],configOut["HKLM Value"],configOut["Enable ActiveX"],configOut["ActiveX Key"],configOut["Flag 3"],configOut["Inject Exe"],configOut["Mutex"],configOut["Hijack Proxy"],configOut["Persistent Proxy"],configOut["Install Name"],configOut["Install Path"],configOut["Copy to ADS"],configOut["Melt"],configOut["Enable Thread Persistence"],configOut["Inject Default Browser"],configOut["Enable KeyLogger"]))
 				counter1 += 1
 			counter2 += 1
-	print "[+] Decoded {0} out of {1} Files".format(counter1, counter2)
+	print("[+] Decoded {0} out of {1} Files".format(counter1, counter2))
 	return "Complete"
 
 # Main
@@ -182,34 +182,34 @@ if __name__ == "__main__":
 			runRecursive(args[0], args[1])
 			sys.exit()
 		else:
-			print "[+] You need to specify Both Dir to read AND Output File"
+			print("[+] You need to specify Both Dir to read AND Output File")
 			parser.print_help()
 			sys.exit()
 	
 	# If not recurisve try to open file
 	try:
-		print "[+] Reading file"
+		print("[+] Reading file")
 		fileData = open(args[0], 'rb').read()
 	except:
-		print "[+] Couldn't Open File {0}".format(args[0])
+		print("[+] Couldn't Open File {0}".format(args[0]))
 	#Run the config extraction
-	print "[+] Searching for Config"
+	print("[+] Searching for Config")
 	config = run(fileData)
 	#If we have a config figure out where to dump it out.
 	if config == None:
-		print "[+] Config not found"
+		print("[+] Config not found")
 		sys.exit()
 	#if you gave me two args im going to assume the 2nd arg is where you want to save the file
 	if len(args) == 2:
-		print "[+] Writing Config to file {0}".format(args[1])
+		print("[+] Writing Config to file {0}".format(args[1]))
 		with open(args[1], 'a') as outFile:
-			for key, value in sorted(config.iteritems()):
-				clean_value = filter(lambda x: x in string.printable, value)
+			for key, value in sorted(config.items()):
+				clean_value = [x for x in value if x in string.printable]
 				outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
 	# if no seconds arg then assume you want it printing to screen
 	else:
-		print "[+] Printing Config to screen"
-		for key, value in sorted(config.iteritems()):
-			clean_value = filter(lambda x: x in string.printable, value)
-			print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-		print "[+] End of Config"
+		print("[+] Printing Config to screen")
+		for key, value in sorted(config.items()):
+			clean_value = [x for x in value if x in string.printable]
+			print("   [-] Key: {0}\t Value: {1}".format(key,clean_value))
+		print("[+] End of Config")

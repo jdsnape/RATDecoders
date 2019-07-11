@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 try:
     from Crypto.Cipher import ARC4
 except ImportError:
-    print "Cannot import PyCrypto, Is it installed?"
+    print("Cannot import PyCrypto, Is it installed?")
 
 
 def main():
@@ -29,17 +29,17 @@ def main():
         sys.exit()
     archive = args[0]
     # Decrypt & Extract the embedded Jar
-    print "[+] Reading File"
+    print("[+] Reading File")
     try:
         embedded = extract_embedded(archive)
     except:
-        print "[+] Failed to Read File"
+        print("[+] Failed to Read File")
         sys.exit()
     # Look for our config file
-    print "    [-] Looking for Config"
+    print("    [-] Looking for Config")
     config = parse_embedded(embedded)
     # Print to pretty Output
-    print "[+] Found Config"
+    print("[+] Found Config")
     print_config(config)    
     
 def extract_embedded(archive):
@@ -50,7 +50,7 @@ def extract_embedded(archive):
             if name == "load/ID": # contains first part of key
                 partial_key = zip.read(name)
                 enckey = partial_key + 'DESW7OWKEJRU4P2K' # complete key
-                print "    [-] Found Key {0}".format(zip.read(name))
+                print("    [-] Found Key {0}".format(zip.read(name)))
             if name == "load/MANIFEST.MF": # this is the embedded jar                
                 raw_embedded = zip.read(name)
             if name == "load/stub.adwind": # This is adwind 3
@@ -61,17 +61,17 @@ def extract_embedded(archive):
         enckey = partial_key
     if enckey != None:
         # Decrypt The raw file
-        print "    [-] Decrypting Embedded Jar"
+        print("    [-] Decrypting Embedded Jar")
         dec_embedded = decrypt_arc4(enckey, raw_embedded)
         return dec_embedded
     else:
-        print "[+] No embedded File Found"
+        print("[+] No embedded File Found")
         sys.exit()
 
 
 def parse_embedded(data):
     newzipdata = data
-    from cStringIO import StringIO
+    from io import StringIO
     newZip = StringIO(newzipdata) # Write new zip file to memory instead of to disk
     with ZipFile(newZip) as zip:
         for name in zip.namelist():
@@ -84,7 +84,7 @@ def decrypt_arc4(enckey, data):
         return cipher.decrypt(data) # decrpyt the data
 
 def print_config(config):
-    xml = filter(lambda x: x in string.printable, config)
+    xml = [x for x in config if x in string.printable]
     root = ET.fromstring(xml)
     raw_config = {}
     for child in root:
@@ -93,8 +93,8 @@ def print_config(config):
         else:
             raw_config[child.attrib["key"]] = child.text
     
-    for key, value in sorted(raw_config.iteritems()):
-        print "    [-] Key: {0}\t Value: {1}".format(key, value)
+    for key, value in sorted(raw_config.items()):
+        print("    [-] Key: {0}\t Value: {1}".format(key, value))
     
     
 if __name__ == "__main__":

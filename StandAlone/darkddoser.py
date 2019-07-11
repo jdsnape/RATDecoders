@@ -55,24 +55,24 @@ def extract(filename,rsrc_name,key):
                 for crypt_str in crypted_config.split('[{#}]'):
                     crypt_str = ''.join([chr(ord(c)^0xbc) for c in crypt_str])
                     decrypted.append(decrypt_str(crypt_str,key))
-    except Exception, e:
-        print '[+] %s: %s' % (Exception, e)
+    except Exception as e:
+        print('[+] %s: %s' % (Exception, e))
     if decrypted:
         try:
             int(decrypted[1]) # easiest way to test success, port = int
-            print '[+] Filename: %s' % filename
-            print '[+] CnC: %s:%s' % (decrypted[0],decrypted[1])
-            print '[+] Server: %s' % decrypted[2]
-            print '[+] Version: %s' % decrypted[8]
-            print '[+] Mutex: %s' % decrypted[4]
-            print '[+] Install: %s' % decrypted[7]
-            print '[+] Service Name: %s' % decrypted[6]
-            print
+            print('[+] Filename: %s' % filename)
+            print('[+] CnC: %s:%s' % (decrypted[0],decrypted[1]))
+            print('[+] Server: %s' % decrypted[2])
+            print('[+] Version: %s' % decrypted[8])
+            print('[+] Mutex: %s' % decrypted[4])
+            print('[+] Install: %s' % decrypted[7])
+            print('[+] Service Name: %s' % decrypted[6])
+            print()
         except:
-            print '[+] Filename: %s' % filename
-            print '[+] Did not successfully decrypt config'
+            print('[+] Filename: %s' % filename)
+            print('[+] Did not successfully decrypt config')
     else:
-        print '[+] Could not locate encrypted config'
+        print('[+] Could not locate encrypted config')
 
 def main():
     parser = argparse.ArgumentParser(description='Extract configuration data from DarkDDoser')
@@ -85,7 +85,7 @@ def main():
         for filename in args.filenames:
             extract(filename,args.resource,args.key)
     else:
-        print args.usage()
+        print(args.usage())
 
 if __name__ == "__main__":
     main()

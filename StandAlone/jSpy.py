@@ -21,24 +21,24 @@ def run(file_name, out_file):
         # config.txt should be a file with a single line of colon seperated values
         config_line = zf.read(name)
         try:
-          config = dict(zip(fields, config_line.split(':')))
+          config = dict(list(zip(fields, config_line.split(':'))))
         except:
-          print "  [-] Possible configuration file found, but cannot parse: {0}".format(name)
+          print("  [-] Possible configuration file found, but cannot parse: {0}".format(name))
 
   if config:
     if out_file:
       with open(out_file, 'wb') as f:
-        print "  [-] Writing output to {0}".format(out_file)
-        for k,v in config.iteritems():
+        print("  [-] Writing output to {0}".format(out_file))
+        for k,v in config.items():
           f.write("  [-] Key: {0}\tValue: {1}\n".format(k, v))
-        print "[+] File Written"
+        print("[+] File Written")
     else:
-      print "[+] Printing Config to screen"
-      for k,v in config.iteritems():
-        print "  [-] Key: {0}\tValue: {1}".format(k, v)
+      print("[+] Printing Config to screen")
+      for k,v in config.items():
+        print("  [-] Key: {0}\tValue: {1}".format(k, v))
 
   else:
-    print "  [-] Unable to locate any possible configuration files"
+    print("  [-] Unable to locate any possible configuration files")
 
 
 
@@ -53,11 +53,11 @@ if __name__ == "__main__":
     parser.print_help()
     sys.exit()
   #Run the config extraction
-  print "[+] Processing File"
+  print("[+] Processing File")
   #if you gave me two args im going to assume the 2nd arg is where you want to save the file
   if len(args) == 2:
     run(args[0], args[1])
   elif len(args) == 1:
     run(args[0], None)
   else:
-    print "[+] You need to specify input"
+    print("[+] You need to specify input")

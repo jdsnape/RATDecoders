@@ -18,15 +18,15 @@ from optparse import OptionParser
 try:
     import pype32
 except ImportError:
-    print "[!] Couldn't Import pype32 'https://github.com/crackinglandia/pype32'"
+    print("[!] Couldn't Import pype32 'https://github.com/crackinglandia/pype32'")
 try:
     from Crypto.Cipher import AES, DES
 except ImportError:
-    print "[!] Couldn't Import Crypto Lib 'sudo pip install pycrypto'"
+    print("[!] Couldn't Import Crypto Lib 'sudo pip install pycrypto'")
 try:
     from pbkdf2 import PBKDF2
 except ImportError:
-    print "[!] Couldn't Import PBKDF2 'sudo pip install pbkdf2'"
+    print("[!] Couldn't Import PBKDF2 'sudo pip install pbkdf2'")
 
 # Main Decode Function Goes Here
 '''
@@ -36,7 +36,7 @@ Must return a python config_dict of values
 
 def run(data):
         pe = pype32.PE(data=data)
-        print "  [-] Collecting Strings"
+        print("  [-] Collecting Strings")
         string_list = get_strings(pe, 2)
 
         # identify the version
@@ -78,7 +78,7 @@ def get_strings(pe, dir_type):
     string_list = []
     m = pe.ntHeaders.optionalHeader.dataDirectory[14].info
     for s in m.netMetaDataStreams[dir_type].info:
-        for offset, value in s.iteritems():
+        for offset, value in s.items():
             string_list.append(value)
         counter += 1
     return string_list
@@ -157,28 +157,28 @@ if __name__ == "__main__":
     
     # If not recurisve try to open file
     try:
-        print "[+] Reading file"
+        print("[+] Reading file")
         fileData = open(args[0], 'rb').read()
     except:
-        print "[+] Couldn't Open File {0}".format(args[0])
+        print("[+] Couldn't Open File {0}".format(args[0]))
     #Run the config extraction
-    print "[+] Searching for Config"
+    print("[+] Searching for Config")
     config = run(fileData)
     #If we have a config figure out where to dump it out.
     if config == None:
-        print "[!] Config not found"
+        print("[!] Config not found")
         sys.exit()
     #if you gave me two args im going to assume the 2nd arg is where you want to save the file
     if len(args) == 2:
-        print "[+] Writing Config to file {0}".format(args[1])
+        print("[+] Writing Config to file {0}".format(args[1]))
         with open(args[1], 'a') as outFile:
-            for key, value in sorted(config.iteritems()):
+            for key, value in sorted(config.items()):
                 clean_value = string_clean(value)
                 outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
     # if no seconds arg then assume you want it printing to screen
     else:
-        print "[+] Printing Config to screen"
-        for key, value in sorted(config.iteritems()):
+        print("[+] Printing Config to screen")
+        for key, value in sorted(config.items()):
             clean_value = string_clean(value)
-            print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-        print "[+] End of Config"
+            print("   [-] Key: {0}\t Value: {1}".format(key,clean_value))
+        print("[+] End of Config")

@@ -14,7 +14,7 @@ from optparse import OptionParser
 try:
 	import pefile
 except ImportError:
-	print "[+] Couldnt Import pefile. Try 'sudo pip install pefile'"
+	print("[+] Couldnt Import pefile. Try 'sudo pip install pefile'")
 	
 
 def configExtract(rawData):
@@ -25,9 +25,9 @@ def configExtract(rawData):
 		  rt_string_idx = [
 		  entry.id for entry in 
 		  pe.DIRECTORY_ENTRY_RESOURCE.entries].index(pefile.RESOURCE_TYPE['RT_RCDATA'])
-		except ValueError, e:
+		except ValueError as e:
 			sys.exit()
-		except AttributeError, e:
+		except AttributeError as e:
 			sys.exit()
 
 		rt_string_directory = pe.DIRECTORY_ENTRY_RESOURCE.entries[rt_string_idx]
@@ -41,7 +41,7 @@ def configExtract(rawData):
 				config = cleaned.split('##')
 				return config
 	except:
-		print "Couldn't Locate the Config, Is it Packed?"
+		print("Couldn't Locate the Config, Is it Packed?")
 		return None			
 
 def run(data):
@@ -89,25 +89,25 @@ if __name__ == "__main__":
 		parser.print_help()
 		sys.exit()
 	try:
-		print "[+] Reading file"
+		print("[+] Reading file")
 		fileData = open(args[0], 'rb').read()
 	except:
-		print "[+] Couldn't Open File {0}".format(args[0])
-	print "[+] Searching for Config"
+		print("[+] Couldn't Open File {0}".format(args[0]))
+	print("[+] Searching for Config")
 	config = run(fileData)
 	if config == None:
-		print "[+] Config not found"
+		print("[+] Config not found")
 		sys.exit()
 	if len(args) == 2:
-		print "[+] Writing Config to file {0}".format(args[1])
+		print("[+] Writing Config to file {0}".format(args[1]))
 		with open(args[1], 'a') as outFile:
-			for key, value in sorted(config.iteritems()):
-				clean_value = filter(lambda x: x in string.printable, value)
+			for key, value in sorted(config.items()):
+				clean_value = [x for x in value if x in string.printable]
 				outFile.write("Key: {0}\t\t Value: {1}\n".format(key,clean_value))
 		
 	else:
-		print "[+] Printing Config to screen"
-		for key, value in sorted(config.iteritems()):
-			clean_value = filter(lambda x: x in string.printable, value)
-			print "   [-] Key: {0}\t\t Value: {1}".format(key,clean_value)
-		print "[+] End of Config"
+		print("[+] Printing Config to screen")
+		for key, value in sorted(config.items()):
+			clean_value = [x for x in value if x in string.printable]
+			print("   [-] Key: {0}\t\t Value: {1}".format(key,clean_value))
+		print("[+] End of Config")

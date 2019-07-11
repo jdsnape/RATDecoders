@@ -14,14 +14,14 @@ import os
 import sys
 import string
 from zipfile import ZipFile
-from cStringIO import StringIO
+from io import StringIO
 from optparse import OptionParser
 
 #Non Standard Imports
 try:
 	from Crypto.Cipher import AES
 except ImportError:
-	print "[+] Couldn't Import Cipher, try 'sudo pip install pycrypto'"
+	print("[+] Couldn't Import Cipher, try 'sudo pip install pycrypto'")
 
 
 # Main Decode Function Goes Here
@@ -57,7 +57,7 @@ def decryptConf(conFile):
 	
 def configParse(confRaw):
 	config = {}
-	clean = filter(lambda x: x in string.printable, confRaw)
+	clean = [x for x in confRaw if x in string.printable]
 	list = clean.split("<separator>")
 	config["Domain"] = list[0]
 	config["Password"] = list[1]
@@ -85,32 +85,32 @@ if __name__ == "__main__":
 		sys.exit()
 	# if we want a recursive extract run this function
 	if options.recursive == True:
-		print "[+] Sorry Not Here Yet Come Back Soon"
+		print("[+] Sorry Not Here Yet Come Back Soon")
 	
 	# If not recurisve try to open file
 	try:
-		print "[+] Reading file"
+		print("[+] Reading file")
 		fileData = open(args[0], 'rb').read()
 	except:
-		print "[+] Couldn't Open File {0}".format(args[0])
+		print("[+] Couldn't Open File {0}".format(args[0]))
 	#Run the config extraction
-	print "[+] Searching for Config"
+	print("[+] Searching for Config")
 	config = run(fileData)
 	#If we have a config figure out where to dump it out.
 	if config == None:
-		print "[+] Config not found"
+		print("[+] Config not found")
 		sys.exit()
 	#if you gave me two args im going to assume the 2nd arg is where you want to save the file
 	if len(args) == 2:
-		print "[+] Writing Config to file {0}".format(args[1])
+		print("[+] Writing Config to file {0}".format(args[1]))
 		with open(args[1], 'a') as outFile:
-			for key, value in sorted(config.iteritems()):
-				clean_value = filter(lambda x: x in string.printable, value)
+			for key, value in sorted(config.items()):
+				clean_value = [x for x in value if x in string.printable]
 				outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
 	# if no seconds arg then assume you want it printing to screen
 	else:
-		print "[+] Printing Config to screen"
-		for key, value in sorted(config.iteritems()):
-			clean_value = filter(lambda x: x in string.printable, value)
-			print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-		print "[+] End of Config"
+		print("[+] Printing Config to screen")
+		for key, value in sorted(config.items()):
+			clean_value = [x for x in value if x in string.printable]
+			print("   [-] Key: {0}\t Value: {1}".format(key,clean_value))
+		print("[+] End of Config")

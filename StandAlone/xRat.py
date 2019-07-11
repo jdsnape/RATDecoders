@@ -34,7 +34,7 @@ def run(data):
         return None
     config_list = []
     if ver == 'V1':
-        print "[+] Found Version 1.x"
+        print("[+] Found Version 1.x")
         # The way the XOR Cypher was implemented the keys are off by 1. 
         key1 = 'RAT11x' # Used for First level of encryption actual key is 'xRAT11'
         key2 = 'eY11K' # used for individual sections, actual key is 'KeY11'
@@ -49,7 +49,7 @@ def run(data):
                 enc_key = key2
             config_list.append(decrypt_XOR(enc_key, sections[i].decode('hex')))
     if ver == 'V2':
-        print "[+] Found Version 2.x"
+        print("[+] Found Version 2.x")
         coded_lines = get_parts(long_line)
         enc_key = aes_key(coded_lines[-1])
         for i in range(1, (len(coded_lines)-1)):
@@ -170,29 +170,29 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit()
     try:
-        print "[+] Reading file"
+        print("[+] Reading file")
         fileData = open(args[0], 'rb').read()
     except:
-        print "[+] Couldn't Open File {0}".format(args[0])
+        print("[+] Couldn't Open File {0}".format(args[0]))
         sys.exit()
     #Run the config extraction
-    print "[+] Searching for Config"
+    print("[+] Searching for Config")
     config = run(fileData)
     #If we have a config figure out where to dump it out.
     if config == None:
-        print "[+] Config not found"
+        print("[+] Config not found")
         sys.exit()
     #if you gave me two args im going to assume the 2nd arg is where you want to save the file
     if len(args) == 2:
-        print "[+] Writing Config to file {0}".format(args[1])
+        print("[+] Writing Config to file {0}".format(args[1]))
         with open(args[1], 'a') as outFile:
-            for key, value in sorted(config.iteritems()):
-                clean_value = filter(lambda x: x in string.printable, value)
+            for key, value in sorted(config.items()):
+                clean_value = [x for x in value if x in string.printable]
                 outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
     # if no seconds arg then assume you want it printing to screen
     else:
-        print "[+] Printing Config to screen"
-        for key, value in sorted(config.iteritems()):
-            clean_value = filter(lambda x: x in string.printable, value)
-            print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-        print "[+] End of Config"
+        print("[+] Printing Config to screen")
+        for key, value in sorted(config.items()):
+            clean_value = [x for x in value if x in string.printable]
+            print("   [-] Key: {0}\t Value: {1}".format(key,clean_value))
+        print("[+] End of Config")

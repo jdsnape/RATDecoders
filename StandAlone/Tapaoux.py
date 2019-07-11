@@ -32,7 +32,7 @@ def find_config(file_data):
     
 def config_decrypt(keys, data):
     for enc_key in keys:
-        print "    [-] Testing for Key: {0}".format(enc_key)
+        print("    [-] Testing for Key: {0}".format(enc_key))
         key_pointer = 0
         decoded = ''
         for i in range(len(data)):
@@ -49,7 +49,7 @@ def config_decrypt(keys, data):
         
         conf_test = re.search('/[a-zA-Z0-9-]*\x2ephp', decoded)
         if conf_test:
-            print "  [-] Found Config"
+            print("  [-] Found Config")
             return string_clean(decoded)
 
 if __name__ == "__main__":
@@ -59,16 +59,16 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit()
         
-    print "[+] Reading File"
+    print("[+] Reading File")
     file_data = open(args[0], 'rb').read()
-    print "  [-] Searching for config"
+    print("  [-] Searching for config")
     config_section = find_config(file_data)
     if config_section == None:
-        print "[!] Config Not Found"
+        print("[!] Config Not Found")
         sys.exit()
     dec_config = config_decrypt(keys, config_section)
-    print "----------------------"
-    print dec_config
-    print "----------------------"
-    print "[+] Complete"
+    print("----------------------")
+    print(dec_config)
+    print("----------------------")
+    print("[+] Complete")
         

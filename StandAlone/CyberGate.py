@@ -19,7 +19,7 @@ from optparse import OptionParser
 try:
 	import pefile
 except ImportError:
-	print "[+] Couldn't Import Cipher, try 'sudo pip install pefile'"
+	print("[+] Couldn't Import Cipher, try 'sudo pip install pefile'")
 
 
 # Main Decode Function Goes Here
@@ -95,7 +95,7 @@ def xorDecode(data):
 	encoded = bytearray(data)
 	for i in range(len(encoded)):
 		encoded[i] ^= key
-	return filter(lambda x: x in string.printable, str(encoded))
+	return [x for x in str(encoded) if x in string.printable]
 
 def configExtract(rawData):
 	try:
@@ -105,9 +105,9 @@ def configExtract(rawData):
 		  rt_string_idx = [
 		  entry.id for entry in 
 		  pe.DIRECTORY_ENTRY_RESOURCE.entries].index(pefile.RESOURCE_TYPE['RT_RCDATA'])
-		except ValueError, e:
+		except ValueError as e:
 			return None
-		except AttributeError, e:
+		except AttributeError as e:
 			return None
 
 		rt_string_directory = pe.DIRECTORY_ENTRY_RESOURCE.entries[rt_string_idx]
@@ -128,7 +128,7 @@ def configExtract(rawData):
 def runRecursive(folder, output):
 	counter1 = 0
 	counter2 = 0
-	print "[+] Writing Configs to File {0}".format(output)
+	print("[+] Writing Configs to File {0}".format(output))
 	with open(output, 'a+') as out:
 		#This line will need changing per Decoder
 		out.write("Filename,Domains, Ports, Campaign ID, Password, Install Flag, Install Dir, Install File Name, ActiveX Key, HKLM Key, HKCU Key, Enable MessageBox, Message Box Icon, Mesage Box Button, Message Title, Message Box Text, Enable Keylogger, KeyLogger Backspace, Keylogger FTP, FTP Address, FTP UserName, FTP Password, FTP Port, FTP Interval, Persistnace, Hide File, Change Creation Date, Mutex, Melt File, Verison, Startup Polocies, USB Spread, P2P Spread, Google Chrome Passwords, Process Injection\n")	
@@ -140,7 +140,7 @@ def runRecursive(folder, output):
 				out.write('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23},{24},{25},{26},{27},{28},{29},{30},{31},{32},{33},{34},{35}\n'.format(server, Config["Domain"],Config["Port"],Config["ServerID"],Config["Password"],Config["Install Flag"],Config["Install Directory"],Config["Install File Name"],Config["Active X Startup"],Config["REG Key HKLM"],Config["REG Key HKCU"],Config["Enable Message Box"],Config["Message Box Icon"],Config["Message Box Button"],Config["Install Message Title"],Config["Install Message Box"],Config["Activate Keylogger"],Config["Keylogger Backspace = Delete"],Config["Keylogger Enable FTP"],Config["FTP Address"],Config["FTP Directory"],Config["FTP UserName"],Config["FTP Password"],Config["FTP Port"],Config["FTP Interval"],Config["Persistance"],Config["Hide File"],Config["Change Creation Date"],Config["Mutex"],Config["Melt File"],Config["CyberGate Version"],Config["Startup Policies"],Config["USB Spread"],Config["P2P Spread"],Config["Google Chrome Passwords"],Config["Process Injection"]))
 				counter1 += 1
 			counter2 += 1
-	print "[+] Decoded {0} out of {1} Files".format(counter1, counter2)
+	print("[+] Decoded {0} out of {1} Files".format(counter1, counter2))
 	return "Complete"
 
 # Main
@@ -161,34 +161,34 @@ if __name__ == "__main__":
 			runRecursive(args[0], args[1])
 			sys.exit()
 		else:
-			print "[+] You need to specify Both Dir to read AND Output File"
+			print("[+] You need to specify Both Dir to read AND Output File")
 			parser.print_help()
 			sys.exit()
 	
 	# If not recurisve try to open file
 	try:
-		print "[+] Reading file"
+		print("[+] Reading file")
 		fileData = open(args[0], 'rb').read()
 	except:
-		print "[+] Couldn't Open File {0}".format(args[0])
+		print("[+] Couldn't Open File {0}".format(args[0]))
 	#Run the config extraction
-	print "[+] Searching for Config"
+	print("[+] Searching for Config")
 	config = run(fileData)
 	#If we have a config figure out where to dump it out.
 	if config == None:
-		print "[+] Config not found"
+		print("[+] Config not found")
 		sys.exit()
 	#if you gave me two args im going to assume the 2nd arg is where you want to save the file
 	if len(args) == 2:
-		print "[+] Writing Config to file {0}".format(args[1])
+		print("[+] Writing Config to file {0}".format(args[1]))
 		with open(args[1], 'a') as outFile:
-			for key, value in sorted(config.iteritems()):
-				clean_value = filter(lambda x: x in string.printable, value)
+			for key, value in sorted(config.items()):
+				clean_value = [x for x in value if x in string.printable]
 				outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
 	# if no seconds arg then assume you want it printing to screen
 	else:
-		print "[+] Printing Config to screen"
-		for key, value in sorted(config.iteritems()):
-			clean_value = filter(lambda x: x in string.printable, value)
-			print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-		print "[+] End of Config"
+		print("[+] Printing Config to screen")
+		for key, value in sorted(config.items()):
+			clean_value = [x for x in value if x in string.printable]
+			print("   [-] Key: {0}\t Value: {1}".format(key,clean_value))
+		print("[+] End of Config")

@@ -41,10 +41,10 @@ def decrypt_configuration(hex):
     tail = ascii[0x20:]
 
     pre_check = []
-    for x in xrange(3):
+    for x in range(3):
         pre_check.append(ord(tail[x]) ^ 0x0c)
 
-    for x in xrange(0xffffff):
+    for x in range(0xffffff):
         prng_seed = x
         if get_next_rng_value() != pre_check[0] or get_next_rng_value() != pre_check[1] or get_next_rng_value() != pre_check[2]:
             continue
@@ -98,7 +98,7 @@ def run(data):
 def runRecursive(folder, output):
 	counter1 = 0
 	counter2 = 0
-	print "[+] Writing Configs to File {0}".format(output)
+	print("[+] Writing Configs to File {0}".format(output))
 	with open(output, 'a+') as out:
 		#This line will need changing per Decoder
 		out.write("File Name, Campaign ID, Domain, Transfer Port, Control Port, File Name, Install Path, Registry Key, ActiveX Key, Install Flag, Hide File, Melt File, Delay, USB Spread, Mutex, Log File, Folder Name, Smart DNS, Protect Process\n")	
@@ -110,7 +110,7 @@ def runRecursive(folder, output):
 				out.write('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18}\n'.format(server, configOut["Campaign ID"],configOut["Domain"],configOut["Client Transfer Port"],configOut["Client Control Port"],configOut["File Name"],configOut["Install Path"],configOut["Registry Key"],configOut["ActiveX Key"],configOut["Install Flag"],configOut["Hide File"],configOut["Melt File"],configOut["Delay"],configOut["USB Spread"],configOut["Mutex"],configOut["Log File"],configOut["Folder Name"],configOut["Smart DNS"],configOut["Protect Process"]))
 				counter1 += 1
 			counter2 += 1
-	print "[+] Decoded {0} out of {1} Files".format(counter1, counter2)
+	print("[+] Decoded {0} out of {1} Files".format(counter1, counter2))
 	return "Complete"
 
 
@@ -130,35 +130,35 @@ if __name__ == "__main__":
 			runRecursive(args[0], args[1])
 			sys.exit()
 		else:
-			print "[+] You need to specify Both Dir to read AND Output File"
+			print("[+] You need to specify Both Dir to read AND Output File")
 			parser.print_help()
 			sys.exit()
 	
 	# If not recurisve try to open file
 	try:
-		print "[+] Reading file"
+		print("[+] Reading file")
 		fileData = open(args[0], 'rb').read()
 	except:
-		print "[+] Couldn't Open File {0}".format(args[0])
+		print("[+] Couldn't Open File {0}".format(args[0]))
                 sys.exit()
 	#Run the config extraction
-	print "[+] Searching for Config"
+	print("[+] Searching for Config")
 	config = run(fileData)
 	#If we have a config figure out where to dump it out.
 	if config == None:
-		print "[+] Config not found"
+		print("[+] Config not found")
 		sys.exit()
 	#if you gave me two args im going to assume the 2nd arg is where you want to save the file
 	if len(args) == 2:
-		print "[+] Writing Config to file {0}".format(args[1])
+		print("[+] Writing Config to file {0}".format(args[1]))
 		with open(args[1], 'a') as outFile:
-			for key, value in sorted(config.iteritems()):
-				clean_value = filter(lambda x: x in string.printable, value)
+			for key, value in sorted(config.items()):
+				clean_value = [x for x in value if x in string.printable]
 				outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
 	# if no seconds arg then assume you want it printing to screen
 	else:
-		print "[+] Printing Config to screen"
-		for key, value in sorted(config.iteritems()):
-			clean_value = filter(lambda x: x in string.printable, value)
-			print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-		print "[+] End of Config"
+		print("[+] Printing Config to screen")
+		for key, value in sorted(config.items()):
+			clean_value = [x for x in value if x in string.printable]
+			print("   [-] Key: {0}\t Value: {1}".format(key,clean_value))
+		print("[+] End of Config")

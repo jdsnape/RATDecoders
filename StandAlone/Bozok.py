@@ -29,7 +29,7 @@ def run(data):
 	conf = {}
 	rawConfig = configExtract(data).replace('\x00', '')
 	config = rawConfig.split("|")
-	print config
+	print(config)
 	if config != None:
 		conf["ServerID"] = config[0]
 		conf["Mutex"] = config[1]
@@ -45,7 +45,7 @@ def run(data):
 		conf["Port"] = config[11]
 		conf["Domain"] = config[12]
 		conf["Unknown Flag3"] = config[13]
-	print conf
+	print(conf)
 	return conf
 	
 		
@@ -59,9 +59,9 @@ def configExtract(rawData):
 		  rt_string_idx = [
 		  entry.id for entry in 
 		  pe.DIRECTORY_ENTRY_RESOURCE.entries].index(pefile.RESOURCE_TYPE['RT_RCDATA'])
-		except ValueError, e:
+		except ValueError as e:
 			sys.exit()
-		except AttributeError, e:
+		except AttributeError as e:
 			sys.exit()
 
 		rt_string_directory = pe.DIRECTORY_ENTRY_RESOURCE.entries[rt_string_idx]
@@ -91,32 +91,32 @@ if __name__ == "__main__":
 		sys.exit()
 	# if we want a recursive extract run this function
 	if options.recursive == True:
-		print "[+] Sorry Not Here Yet Come Back Soon"
+		print("[+] Sorry Not Here Yet Come Back Soon")
 	
 	# If not recurisve try to open file
 	try:
-		print "[+] Reading file"
+		print("[+] Reading file")
 		fileData = open(args[0], 'rb').read()
 	except:
-		print "[+] Couldn't Open File {0}".format(args[0])
+		print("[+] Couldn't Open File {0}".format(args[0]))
 	#Run the config extraction
-	print "[+] Searching for Config"
+	print("[+] Searching for Config")
 	config = run(fileData)
 	#If we have a config figure out where to dump it out.
 	if config == None:
-		print "[+] Config not found"
+		print("[+] Config not found")
 		sys.exit()
 	#if you gave me two args im going to assume the 2nd arg is where you want to save the file
 	if len(args) == 2:
-		print "[+] Writing Config to file {0}".format(args[1])
+		print("[+] Writing Config to file {0}".format(args[1]))
 		with open(args[1], 'a') as outFile:
-			for key, value in sorted(config.iteritems()):
-				clean_value = filter(lambda x: x in string.printable, value)
+			for key, value in sorted(config.items()):
+				clean_value = [x for x in value if x in string.printable]
 				outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
 	# if no seconds arg then assume you want it printing to screen
 	else:
-		print "[+] Printing Config to screen"
-		for key, value in sorted(config.iteritems()):
-			clean_value = filter(lambda x: x in string.printable, value)
-			print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-		print "[+] End of Config"
+		print("[+] Printing Config to screen")
+		for key, value in sorted(config.items()):
+			clean_value = [x for x in value if x in string.printable]
+			print("   [-] Key: {0}\t Value: {1}".format(key,clean_value))
+		print("[+] End of Config")

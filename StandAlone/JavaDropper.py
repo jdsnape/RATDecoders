@@ -15,7 +15,7 @@ import string
 import hashlib
 from optparse import OptionParser
 from zipfile import ZipFile
-from cStringIO import StringIO
+from io import StringIO
 from base64 import b64decode
 
 #Non Standard Imports
@@ -25,7 +25,7 @@ from Crypto.Cipher import ARC4, AES
 #Helper Functions Go Here
 
 def string_print(line):
-    return filter(lambda x: x in string.printable, line)
+    return [x for x in line if x in string.printable]
 
 #### Ciphers ####    
 def decrypt_RC4(enckey, data):
@@ -42,7 +42,7 @@ def parse_ek(key, drop):
     drop_details = key[16:]
     decoded = decrypt_AES(enc_key, coded)
     for section in drop_details.split(','):
-        print b64decode(section).decode('hex')
+        print(b64decode(section).decode('hex'))
     return decoded
 
 def parse_load(key, drop):
@@ -57,10 +57,10 @@ def parse_stub(drop):
     for key in keys:
         decoded = decrypt_AES(key, drop)
         if 'META-INF' in decoded:
-            print "Found Embedded Jar"
+            print("Found Embedded Jar")
             return decoded
         if 'Program' in decoded:
-            print "Found Embedded EXE"
+            print("Found Embedded EXE")
             return decoded
 
 # Jar Parser
@@ -84,28 +84,28 @@ def run(file_name, save_name):
             
         
         if ek == 2:
-            print "Found EK Dropper"
+            print("Found EK Dropper")
             key = drop_jar.read('k')
             drop = drop_jar.read('e')
             decoded = parse_ek(key, drop)
         
         if load_stub == 2:
-            print "Found LoadStub Dropper"
+            print("Found LoadStub Dropper")
             key = drop_jar.read('password.ini')
             drop = drop_jar.read('config.ini')
             decoded = parse_load(key, drop)
             
         if stub_drop:
-            print "Found Stub Dropper"
+            print("Found Stub Dropper")
             drop = drop_jar.read('stub/stub.dll')
             decoded = parse_stub(drop)
             
     if decoded:
         with open(save_name, 'wb') as out:
             out.write(decoded)
-            print "Saved Decoded file to {0}".format(save_name)
+            print("Saved Decoded file to {0}".format(save_name))
     else:
-        print "Unable to decode"
+        print("Unable to decode")
     return
 
 # Main
@@ -119,5 +119,5 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit()
     #Run the config extraction
-    print "[+] Searching for Config"
+    print("[+] Searching for Config")
     extracted = run(args[0], args[1])

@@ -59,7 +59,7 @@ def decode_strings(line):
                 xor += 256
             new_string += chr(xor)
         except:
-            print "Unable to decode character"
+            print("Unable to decode character")
             
     return new_string
 
@@ -76,27 +76,27 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit()
     try:
-        print "[+] Reading file {0}".format(args[0])
+        print("[+] Reading file {0}".format(args[0]))
         fileData = open(args[0], 'rb').read()
     except:
-        print "[+] Couldn't Open File {0}".format(args[0])
+        print("[+] Couldn't Open File {0}".format(args[0]))
         sys.exit()
     #Run the config extraction
-    print "[+] Searching for Config"
+    print("[+] Searching for Config")
     config = run(fileData)
     #If we have a config figure out where to dump it out.
     if config == None:
-        print "[+] Config not found"
+        print("[+] Config not found")
         sys.exit()
     #if you gave me two args im going to assume the 2nd arg is where you want to save the file
     if len(args) == 2:
-        print "[+] Writing Config to file {0}".format(args[1])
+        print("[+] Writing Config to file {0}".format(args[1]))
         with open(args[1], 'a') as outFile:
-            for key, value in sorted(config.iteritems()):
+            for key, value in sorted(config.items()):
                 outFile.write("Key: {0}\t Value: {1}\n".format(key,value))
     # if no seconds arg then assume you want it printing to screen
     else:
-        print "[+] Printing Config to screen"
-        for key, value in sorted(config.iteritems()):
-            print "   [-] Key: {0}\t Value: {1}".format(key,value)
-        print "[+] End of Config"
+        print("[+] Printing Config to screen")
+        for key, value in sorted(config.items()):
+            print("   [-] Key: {0}\t Value: {1}".format(key,value))
+        print("[+] End of Config")

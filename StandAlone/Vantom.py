@@ -45,7 +45,7 @@ def calc_length(byteStr):
         #return None
 
 def string_print(line):
-    return filter(lambda x: x in string.printable, line)
+    return [x for x in line if x in string.printable]
 
 def first_split(data):
     splits = data.split('\x56\x00\x61\x00\x6E\x00\x54\x00\x6F\x00\x4D\x00\x52\x00\x41\x00\x54\x00\x00\x15\x56\x00\x61\x00\x6E\x00\x54\x00\x6F\x00\x4D\x00\x20\x00\x52\x00\x41\x00\x54\x00')
@@ -95,7 +95,7 @@ def parse_config(raw_config):
 def runRecursive(folder, output):
     counter1 = 0
     counter2 = 0
-    print "[+] Writing Configs to File {0}".format(output)
+    print("[+] Writing Configs to File {0}".format(output))
     with open(output, 'a+') as out:
         #This line will need changing per Decoder
         out.write("Filename,Campaign ID, Domain, Port, InstallName, InstallPath\n")    
@@ -107,7 +107,7 @@ def runRecursive(folder, output):
                 out.write('{0},{1},{2},{3},{4},{5}\n'.format(server, configOut["CampaignID"],configOut["Domain"],configOut["Port"],configOut["InstallName"],configOut["InstallPath"]))
                 counter1 += 1
             counter2 += 1
-    print "[+] Decoded {0} out of {1} Files".format(counter1, counter2)
+    print("[+] Decoded {0} out of {1} Files".format(counter1, counter2))
     return "Complete"
 
 # Main
@@ -128,35 +128,35 @@ if __name__ == "__main__":
             runRecursive(args[0], args[1])
             sys.exit()
         else:
-            print "[+] You need to specify Both Dir to read AND Output File"
+            print("[+] You need to specify Both Dir to read AND Output File")
             parser.print_help()
             sys.exit()
     
     # If not recurisve try to open file
     try:
-        print "[+] Reading file"
+        print("[+] Reading file")
         fileData = open(args[0], 'rb').read()
     except:
-        print "[+] Couldn't Open File {0}".format(args[0])
+        print("[+] Couldn't Open File {0}".format(args[0]))
         sys.exit()
     #Run the config extraction
-    print "[+] Searching for Config"
+    print("[+] Searching for Config")
     config = run(fileData)
     #If we have a config figure out where to dump it out.
     if config == None:
-        print "[+] Config not found"
+        print("[+] Config not found")
         sys.exit()
     #if you gave me two args im going to assume the 2nd arg is where you want to save the file
     if len(args) == 2:
-        print "[+] Writing Config to file {0}".format(args[1])
+        print("[+] Writing Config to file {0}".format(args[1]))
         with open(args[1], 'a') as outFile:
-            for key, value in sorted(config.iteritems()):
-                clean_value = filter(lambda x: x in string.printable, value)
+            for key, value in sorted(config.items()):
+                clean_value = [x for x in value if x in string.printable]
                 outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
     # if no seconds arg then assume you want it printing to screen
     else:
-        print "[+] Printing Config to screen"
-        for key, value in sorted(config.iteritems()):
-            clean_value = filter(lambda x: x in string.printable, value)
-            print "   [-] Key: {0}\t Value: {1}".format(key,clean_value)
-        print "[+] End of Config"
+        print("[+] Printing Config to screen")
+        for key, value in sorted(config.items()):
+            clean_value = [x for x in value if x in string.printable]
+            print("   [-] Key: {0}\t Value: {1}".format(key,clean_value))
+        print("[+] End of Config")
