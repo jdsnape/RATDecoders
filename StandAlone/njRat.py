@@ -164,6 +164,9 @@ def run_recursive(folder, output):
     print(("[+] Decoded {0} out of {1} Files".format(counter1, counter2)))
     return "Complete"
 
+def is_printable(s):
+    return not any(repr(ch).startswith("'\\x") or repr(ch).startswith("'\\u") for ch in s)
+
 # Main
 
 if __name__ == "__main__":
@@ -206,12 +209,19 @@ if __name__ == "__main__":
             for key, value in sorted(config.items()):
                 if isinstance(value, bytes):
                     value = value.decode('utf-8')
-                clean_value = [x for x in value if x in string.printable]
+                clean_value = ''.join(ch for ch in value if is_printable(ch))
+                #if isinstance(value, bytes):
+                #    value = value.decode('utf-8')
+                # clean_value = filter(lambda x: x in string.printable, value)
                 outFile.write("Key: {0}\t Value: {1}\n".format(key,clean_value))
     # if no seconds arg then assume you want it printing to screen
     else:
         print("[+] Printing Config to screen")
         for key, value in sorted(config.items()):
-            clean_value = [x for x in value if x in string.printable]
+            # clean_value = filter(lambda x: x in string.printable, value)
+            #clean_value = [x for x in value if x in string.printable]
+            if isinstance(value, bytes):
+                value = value.decode('utf-8')
+            clean_value = ''.join(ch for ch in value if is_printable(ch))
             print(("   [-] Key: {0}\t Value: {1}".format(key,clean_value)))
         print("[+] End of Config")
